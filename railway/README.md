@@ -12,7 +12,7 @@ Create a Railway service from this GitHub repo.
 Settings:
 
 - Root directory: `railway/hermes`
-- Start command: `gateway run`
+- Start command: leave empty, or set to `hermes-railway`
 - Volume mount path: `/opt/data`
 - Public networking: disabled
 
