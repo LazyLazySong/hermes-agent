@@ -1,0 +1,17 @@
+:{$PORT:8080} {
+    handle /healthz {
+        respond "ok" 200
+    }
+
+    handle /telegram* {
+        reverse_proxy http://{$HERMES_INTERNAL_HOST:hermes.railway.internal}:{$HERMES_TELEGRAM_PORT:8443}
+    }
+
+    handle {
+        basic_auth {
+            {$DASHBOARD_USER} {$DASHBOARD_PASSWORD_HASH}
+        }
+
+        reverse_proxy http://{$HERMES_INTERNAL_HOST:hermes.railway.internal}:{$HERMES_DASHBOARD_PORT:9119}
+    }
+}
