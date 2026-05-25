@@ -2,15 +2,16 @@
 
 This repo is deployed as two Railway services:
 
-- `hermes`: builds the root `Dockerfile`, runs `gateway run`, stores data in `/opt/data`.
+- `hermes`: uses the published Hermes image, runs `gateway run`, stores data in `/opt/data`.
 - `caddy`: builds `railway/caddy/Dockerfile`, exposes the public domain, protects the dashboard with Basic Auth, and forwards `/telegram` to Hermes without Basic Auth.
 
 ## Hermes service
 
-Create a Railway service from this GitHub repo with root directory `/`.
+Create a Railway service from this GitHub repo.
 
 Settings:
 
+- Root directory: `railway/hermes`
 - Start command: `gateway run`
 - Volume mount path: `/opt/data`
 - Public networking: disabled
