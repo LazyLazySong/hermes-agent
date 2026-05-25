@@ -1,0 +1,25 @@
+#!/command/with-contenv sh
+set -eu
+
+ENV_FILE="/opt/data/.env"
+
+# Railway mounts the persistent volume before cont-init scripts run. Mirror
+# selected Railway Variables into Hermes' dotenv after the mount so gateway
+# config reads the same values as the deployment environment.
+mkdir -p "$(dirname "$ENV_FILE")"
+touch "$ENV_FILE"
+chmod 600 "$ENV_FILE" 2>/dev/null || true
+
+for key in TELEGRAM_BOT_TOKEN TELEGRAM_ALLOWED_USERS GATEWAY_ALLOW_ALL_USERS; do
+  eval "value=\${$key:-}"
+  if [ -n "$value" ]; then
+    tmp="${ENV_FILE}.tmp"
+    grep -v "^${key}=" "$ENV_FILE" > "$tmp" || true
+    printf '%s=%s\n' "$key" "$value" >> "$tmp"
+    mv "$tmp" "$ENV_FILE"
+    chmod 600 "$ENV_FILE" 2>/dev/null || true
+    echo "Railway env synced for ${key}."
+  fi
+done
+
+chown hermes:hermes "$ENV_FILE" 2>/dev/null || true
